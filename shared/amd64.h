@@ -63,16 +63,7 @@ struct Gate_Descriptor
     unsigned short Offset0;
     Segment_Selector Selector;
 
-    union
-    {
-        unsigned char Reserved0;
-
-        struct
-        {
-            unsigned char ParameterCount : 5;
-            unsigned char Reserved1 : 3;
-        } Call_Gate_86;
-    };
+    unsigned char Reserved0;
 
     unsigned char Type : 4;
     unsigned char S : 1;

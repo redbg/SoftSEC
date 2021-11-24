@@ -30,9 +30,8 @@ if %TargetVersion% == Win7 (
 if %TargetVersion% == Win10 (
     set Preprocessor=%Preprocessor% /D "_WIN32_WINNT=0x0A00" /D "WINVER=0x0A00" /D "WINNT=1" /D "NTDDI_VERSION=0x0A000008"
 )
-
 @REM Linker Options
-set LinkerOptions=/Driver /ENTRY:"DriverEntry" /SUBSYSTEM:NATIVE,"6.01" /NODEFAULTLIB /OUT:%TargetName%_%TargetArch%.sys
+set LinkerOptions=/Driver /ENTRY:"DriverEntry" /SUBSYSTEM:NATIVE,"6.01" /NODEFAULTLIB /OUT:bin\%TargetName%_%TargetArch%.sys
 set LinkerLibrary="ntoskrnl.lib"
 
 if %Configuration% == Debug (
@@ -46,8 +45,9 @@ cl %CompilerFiles% %CompilerOptions% %Preprocessor% /link %LinkerOptions% %Linke
 
 @REM -------------------- User mode --------------------
 
-cl um\main.cpp
+cl um\main.cpp /link /OUT:bin\%TargetName%_%TargetArch%.exe
 
 @REM -------------------- clear --------------------
 
 del *.obj
+del *.pdb

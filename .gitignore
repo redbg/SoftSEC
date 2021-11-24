@@ -1,4 +1,1 @@
-*.exe
-*.sys
-*.pdb
-*.obj
+bin/*
