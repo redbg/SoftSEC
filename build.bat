@@ -51,3 +51,5 @@ cl um\main.cpp /link /OUT:bin\%TargetName%_%TargetArch%.exe
 
 del *.obj
 del *.pdb
+
+doxygen

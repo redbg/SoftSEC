@@ -13,116 +13,119 @@
 
 #pragma pack(push, 1)
 
-struct Segment_Selector
+namespace ss
 {
-    unsigned short RPL : 2;
-    unsigned short TI : 1;
-    unsigned short Index : 13;
-};
-
-struct Segment_Descriptor
-{
-    unsigned short Limit0;
-    unsigned short Base0;
-
-    unsigned char Base1;
-
-    unsigned char Type : 4;
-
-    unsigned char S : 1;
-    unsigned char DPL : 2;
-    unsigned char P : 1;
-
-    unsigned char Limit1 : 4;
-
-    unsigned char AVL : 1;
-    unsigned char L : 1;
-    unsigned char DB : 1;
-    unsigned char G : 1;
-
-    unsigned char Base2;
-
-    DWORD32 BaseAddress()
+    struct Segment_Selector
     {
-        return Base0 | (Base1 << 16) | (Base2 << 24);
-    }
+        unsigned short RPL : 2;
+        unsigned short TI : 1;
+        unsigned short Index : 13;
+    };
 
-    DWORD32 Limit()
+    struct Segment_Descriptor
     {
-        return Limit0 | (Limit1 << 16);
-    }
+        unsigned short Limit0;
+        unsigned short Base0;
 
-    void Print()
-    {
-        KdPrint(("Base:[%x] Limit:[%x]\n", BaseAddress(), Limit()));
-    }
-};
+        unsigned char Base1;
 
-struct Gate_Descriptor
-{
-    unsigned short Offset0;
-    Segment_Selector Selector;
+        unsigned char Type : 4;
 
-    unsigned char Reserved0;
+        unsigned char S : 1;
+        unsigned char DPL : 2;
+        unsigned char P : 1;
 
-    unsigned char Type : 4;
-    unsigned char S : 1;
-    unsigned char DPL : 2;
-    unsigned char P : 1;
+        unsigned char Limit1 : 4;
 
-    unsigned short Offset1;
+        unsigned char AVL : 1;
+        unsigned char L : 1;
+        unsigned char DB : 1;
+        unsigned char G : 1;
 
-    DWORD32 Offset()
-    {
-        return Offset0 | (Offset1 << 16);
-    }
-};
+        unsigned char Base2;
 
-struct Gate_Descriptor_64 : Gate_Descriptor
-{
-    unsigned int Offset2;
-    unsigned int Reserved2;
-
-    DWORD64 Offset()
-    {
-        return Gate_Descriptor::Offset() | ((DWORD64)Offset2 << 32);
-    }
-};
-
-struct GDTR
-{
-    unsigned short Limit;
-    Segment_Descriptor *BaseAddress;
-
-    void SGDT() { _sgdt(this); }
-    void LGDT() { _lgdt(this); }
-
-    size_t Size()
-    {
-        return ((Limit + 1) / 8);
-    }
-
-    void Print()
-    {
-        for (size_t i = 0; i < Size(); i++)
+        DWORD32 BaseAddress()
         {
-            BaseAddress[i].Print();
+            return Base0 | (Base1 << 16) | (Base2 << 24);
         }
-    }
-};
 
-struct IDTR
-{
-    unsigned short Limit;
-    void *BaseAddress;
+        DWORD32 Limit()
+        {
+            return Limit0 | (Limit1 << 16);
+        }
 
-    void SIDT() { __sidt(this); }
-    void LIDT() { __lidt(this); }
+        void Print()
+        {
+            KdPrint(("Base:[%x] Limit:[%x]\n", BaseAddress(), Limit()));
+        }
+    };
 
-    size_t Size()
+    struct Gate_Descriptor
     {
-        return ((Limit + 1) / 8);
-    }
-};
+        unsigned short Offset0;
+        Segment_Selector Selector;
+
+        unsigned char Reserved0;
+
+        unsigned char Type : 4;
+        unsigned char S : 1;
+        unsigned char DPL : 2;
+        unsigned char P : 1;
+
+        unsigned short Offset1;
+
+        DWORD32 Offset()
+        {
+            return Offset0 | (Offset1 << 16);
+        }
+    };
+
+    struct Gate_Descriptor_64 : Gate_Descriptor
+    {
+        unsigned int Offset2;
+        unsigned int Reserved2;
+
+        DWORD64 Offset()
+        {
+            return Gate_Descriptor::Offset() | ((DWORD64)Offset2 << 32);
+        }
+    };
+
+    struct GDTR
+    {
+        unsigned short Limit;
+        Segment_Descriptor *BaseAddress;
+
+        void SGDT() { _sgdt(this); }
+        void LGDT() { _lgdt(this); }
+
+        size_t Size()
+        {
+            return ((Limit + 1) / 8);
+        }
+
+        void Print()
+        {
+            for (size_t i = 0; i < Size(); i++)
+            {
+                BaseAddress[i].Print();
+            }
+        }
+    };
+
+    struct IDTR
+    {
+        unsigned short Limit;
+        void *BaseAddress;
+
+        void SIDT() { __sidt(this); }
+        void LIDT() { __lidt(this); }
+
+        size_t Size()
+        {
+            return ((Limit + 1) / 8);
+        }
+    };
+}
 
 #pragma pack(pop)
