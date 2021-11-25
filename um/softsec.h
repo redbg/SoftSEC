@@ -14,22 +14,7 @@
 
 namespace SS
 {
-    /**
-     * @brief 
-     * 
-     * @param lpServiceName 
-     * @param lpBinaryPathName 
-     * @return true 
-     * @return false 
-     */
     bool LoadDriver(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName);
-
-    /**
-     * @brief 
-     * 
-     * @param lpServiceName 
-     * @return true 
-     * @return false 
-     */
+    
     bool UnloadDriver(LPCTSTR lpServiceName);
 }
