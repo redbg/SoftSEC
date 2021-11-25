@@ -20,11 +20,12 @@ extern "C" NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_
 
     DbgBreakPoint();
 
-    ss::GDTR gdtr;
+    SS::GDTR gdtr;
 
     gdtr.SGDT();
 
     gdtr.Print();
+
 
     return STATUS_SUCCESS;
 }

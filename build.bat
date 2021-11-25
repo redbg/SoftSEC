@@ -1,8 +1,8 @@
 @echo off
 
 set TargetName=softsec
-set TargetArch=x86
-set TargetVersion=Win10
+set TargetArch=x64
+set TargetVersion=Win7
 set Configuration=Debug
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" %TargetArch%
@@ -45,11 +45,9 @@ cl %CompilerFiles% %CompilerOptions% %Preprocessor% /link %LinkerOptions% %Linke
 
 @REM -------------------- User mode --------------------
 
-cl um\main.cpp /link /OUT:bin\%TargetName%_%TargetArch%.exe
+cl um\main.cpp um\softsec.cpp /Zi /link /OUT:bin\%TargetName%.exe "ntdll.lib" "AdvApi32.lib"
 
 @REM -------------------- clear --------------------
 
 del *.obj
 del *.pdb
-
-doxygen

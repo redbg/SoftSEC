@@ -13,7 +13,7 @@
 
 #pragma pack(push, 1)
 
-namespace ss
+namespace SS
 {
     struct Segment_Selector
     {
@@ -108,6 +108,40 @@ namespace ss
         {
             for (size_t i = 0; i < Size(); i++)
             {
+                if (BaseAddress[i].P == 0)
+                {
+                    continue;
+                }
+
+                KdPrint(("[%p]:", (INT_PTR)BaseAddress + (i << 3)));
+
+                switch (i << 3)
+                {
+                case KGDT64_NULL:
+                    KdPrint(("KGDT64_NULL:"));
+                    break;
+                case KGDT64_R0_CODE:
+                    KdPrint(("KGDT64_R0_CODE:"));
+                    break;
+                case KGDT64_R0_DATA:
+                    KdPrint(("KGDT64_R0_DATA:"));
+                    break;
+                case KGDT64_R3_CMCODE:
+                    KdPrint(("KGDT64_R3_CMCODE:"));
+                    break;
+                case KGDT64_R3_DATA:
+                    KdPrint(("KGDT64_R3_DATA:"));
+                    break;
+                case KGDT64_R3_CODE:
+                    KdPrint(("KGDT64_R3_CODE:"));
+                    break;
+                case KGDT64_SYS_TSS:
+                    KdPrint(("KGDT64_SYS_TSS:"));
+                    break;
+                case KGDT64_R3_CMTEB:
+                    KdPrint(("KGDT64_R3_CMTEB:"));
+                    break;
+                }
                 BaseAddress[i].Print();
             }
         }
