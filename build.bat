@@ -16,7 +16,7 @@ set INCLUDE=%INCLUDE%;%WindowsSdkDir%Include\%WindowsSDKVersion%km
 set LIB=%LIB%;%WindowsSdkDir%Lib\%WindowsSDKVersion%km\%TargetArch%
 
 @REM Compiler Options
-set CompilerFiles=km\DriverEntry.cpp
+set CompilerFiles=km\softsec.cpp
 set CompilerOptions=/kernel /Gz /W3 /WX /std:c++17
 if %TargetArch% == x86 (
     set Preprocessor=/D "_X86_=1" /D "i386=1" /D "STD_CALL"
@@ -42,10 +42,6 @@ if %Configuration% == Debug (
 
 @REM Compiler & Linker
 cl %CompilerFiles% %CompilerOptions% %Preprocessor% /link %LinkerOptions% %LinkerLibrary%
-
-@REM -------------------- User mode --------------------
-
-cl um\main.cpp um\softsec.cpp /Zi /link /OUT:bin\%TargetName%.exe "ntdll.lib" "AdvApi32.lib"
 
 @REM -------------------- clear --------------------
 
