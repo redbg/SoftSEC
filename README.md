@@ -11,6 +11,6 @@
 ## Roadmap
 
 - Process Memory
-  - [] Allocate and free virtual memory
-  - [] Change memory protection
-  - [] Read/Write virtual memory
+  - [ ] Allocate and free virtual memory
+  - [ ] Change memory protection
+  - [ ] Read/Write virtual memory
