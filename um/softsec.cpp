@@ -13,78 +13,103 @@
 
 namespace SS
 {
-    bool LoadDriver(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName)
+    BOOL LoadDriver(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName)
     {
-        // OpenSCManager
-        SC_HANDLE hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+        BOOL bRet = TRUE;
+        SC_HANDLE hSCManager = NULL;
+        SC_HANDLE hService = NULL;
 
-        if (hSCManager == NULL)
+        do
         {
-            return false;
-        }
+            // 1. OpenSCManager
+            hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+            if (hSCManager == NULL)
+            {
+                bRet = FALSE;
+                break;
+            }
 
-        // CreateService
-        SC_HANDLE hService = CreateService(hSCManager,
-                                           lpServiceName,
-                                           nullptr,
-                                           SERVICE_ALL_ACCESS,
-                                           SERVICE_KERNEL_DRIVER,
-                                           SERVICE_DEMAND_START,
-                                           SERVICE_ERROR_NORMAL,
-                                           lpBinaryPathName,
-                                           nullptr,
-                                           nullptr,
-                                           nullptr,
-                                           nullptr,
-                                           nullptr);
+            // 2. CreateService
+            hService = CreateService(hSCManager,
+                                     lpServiceName,
+                                     nullptr,
+                                     SERVICE_ALL_ACCESS,
+                                     SERVICE_KERNEL_DRIVER,
+                                     SERVICE_DEMAND_START,
+                                     SERVICE_ERROR_NORMAL,
+                                     lpBinaryPathName,
+                                     nullptr,
+                                     nullptr,
+                                     nullptr,
+                                     nullptr,
+                                     nullptr);
+            if (hService == NULL)
+            {
+                bRet = FALSE;
+                break;
+            }
 
-        if (hService == NULL)
-        {
+            // 3. StartService
+            if (StartService(hService, 0, nullptr) == FALSE)
+            {
+                bRet = FALSE;
+                break;
+            }
+        } while (FALSE);
+
+        // CloseServiceHandle
+        if (hSCManager != NULL)
             CloseServiceHandle(hSCManager);
-            return false;
-        }
-
-        // StartService
-        if (StartService(hService, 0, nullptr) == FALSE)
-        {
-            CloseServiceHandle(hSCManager);
+        if (hService != NULL)
             CloseServiceHandle(hService);
-            return false;
-        }
-
-        CloseServiceHandle(hSCManager);
-        CloseServiceHandle(hService);
         return true;
     }
 
-    bool UnloadDriver(LPCTSTR lpServiceName)
+    BOOL UnloadDriver(LPCTSTR lpServiceName)
     {
-        // OpenSCManager
-        SC_HANDLE hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+        BOOL bRet = TRUE;
+        SC_HANDLE hSCManager = NULL;
+        SC_HANDLE hService = NULL;
+        SERVICE_STATUS serviceStatus = {};
 
-        if (hSCManager == NULL)
+        do
         {
-            return false;
-        }
+            // 1. OpenSCManager
+            hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+            if (hSCManager == NULL)
+            {
+                bRet = FALSE;
+                break;
+            }
 
-        // OpenService
-        SC_HANDLE hService = OpenService(hSCManager, lpServiceName, SERVICE_ALL_ACCESS);
+            // 2. OpenService
+            hService = OpenService(hSCManager, lpServiceName, SERVICE_ALL_ACCESS);
+            if (hService == NULL)
+            {
+                bRet = FALSE;
+                break;
+            }
 
-        if (hService == NULL)
-        {
+            // 3. ControlService
+            if (ControlService(hService, SERVICE_CONTROL_STOP, &serviceStatus) == FALSE)
+            {
+                bRet = FALSE;
+                break;
+            }
+
+            // 4. DeleteService
+            if (DeleteService(hService) == FALSE)
+            {
+                bRet = FALSE;
+                break;
+            }
+        } while (FALSE);
+
+        // CloseServiceHandle
+        if (hSCManager != NULL)
             CloseServiceHandle(hSCManager);
-            return false;
-        }
-
-        // ControlService
-        SERVICE_STATUS ServiceStatus = {};
-        ControlService(hService, SERVICE_CONTROL_STOP, &ServiceStatus);
-
-        // DeleteService
-        DeleteService(hService);
-
-        CloseServiceHandle(hSCManager);
-        CloseServiceHandle(hService);
-        return true;
+        if (hService != NULL)
+            CloseServiceHandle(hService);
+        return bRet;
     }
 }

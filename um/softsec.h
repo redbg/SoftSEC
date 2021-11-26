@@ -27,7 +27,7 @@ namespace SS
      * SS::LoadDriver(TEXT("softsec"), TEXT("C:\\Users\\Win10_64\\Desktop\\softsec_x64.sys"));
      * @endcode
      */
-    bool LoadDriver(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName);
+    BOOL LoadDriver(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName);
 
     /**
      * @brief 
@@ -41,5 +41,5 @@ namespace SS
      * SS::UnloadDriver(TEXT("softsec"));
      * @endcode
      */
-    bool UnloadDriver(LPCTSTR lpServiceName);
+    BOOL UnloadDriver(LPCTSTR lpServiceName);
 }

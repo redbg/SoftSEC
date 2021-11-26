@@ -7,3 +7,10 @@
 - Windows 10 WDK, version 2004 (10.0.19041.685)
 - Visual Studio Code
 - Doxygen
+
+## Roadmap
+
+- Process Memory
+  - [] Allocate and free virtual memory
+  - [] Change memory protection
+  - [] Read/Write virtual memory
