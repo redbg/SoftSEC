@@ -10,13 +10,14 @@
  */
 
 #pragma once
+#include "amd64.h"
 
 #define NT_DEVICE_NAME L"\\Device\\softsec"
 #define DOS_DEVICE_NAME L"\\DosDevices\\softsec"
 
 #define IOCTL_SS_VirtualMemory CTL_CODE(FILE_DEVICE_UNKNOWN, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
-namespace SS
+namespace SS::BASE
 {
     struct VirtualMemory
     {

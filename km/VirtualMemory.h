@@ -2,9 +2,9 @@
 #include <ntifs.h>
 #include "../shared/shared.h"
 
-namespace SS::KM
+namespace SS
 {
-    struct VirtualMemory : SS::VirtualMemory
+    struct VirtualMemory : SS::BASE::VirtualMemory
     {
         NTSTATUS Dispatch()
         {
@@ -13,10 +13,10 @@ namespace SS::KM
             switch (Method)
             {
             case METHOD::Allocate:
-                ntStatus = Allocate();
+                ntStatus = DispatchAllocate();
                 break;
             case METHOD::Free:
-                ntStatus = Free();
+                ntStatus = DispatchFree();
                 break;
             default:
                 ntStatus = STATUS_INVALID_DEVICE_REQUEST;
@@ -26,7 +26,7 @@ namespace SS::KM
             return ntStatus;
         }
 
-        NTSTATUS Allocate()
+        NTSTATUS DispatchAllocate()
         {
             NTSTATUS ntStatus = STATUS_SUCCESS;
 
@@ -55,7 +55,7 @@ namespace SS::KM
             return ntStatus;
         }
 
-        NTSTATUS Free()
+        NTSTATUS DispatchFree()
         {
             NTSTATUS ntStatus = STATUS_SUCCESS;
 

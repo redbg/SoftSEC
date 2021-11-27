@@ -26,7 +26,7 @@ namespace SS::KM::Dispatch
         switch (irpSp->Parameters.DeviceIoControl.IoControlCode)
         {
         case IOCTL_SS_VirtualMemory:
-            ntStatus = ((SS::KM::VirtualMemory *)Irp->AssociatedIrp.SystemBuffer)->Dispatch();
+            ntStatus = ((SS::VirtualMemory *)Irp->AssociatedIrp.SystemBuffer)->Dispatch();
             Irp->IoStatus.Information = sizeof(SS::VirtualMemory);
             break;
         default:

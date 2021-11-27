@@ -10,10 +10,16 @@
 
 ## Roadmap
 
+- SS::Driver
+  - [x] `BOOL SS::Driver::Load(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName);`
+  - [x] `BOOL SS::Driver::Unload(LPCTSTR lpServiceName)`
 - SS::VirtualMemory
-  - [ ] SS::VirtualMemory::Allocate  SS::VirtualMemory::Free
-  - [ ] SS::VirtualMemory::Read      SS::VirtualMemory::Write
-  - [ ] SS::VirtualMemory::Lock      SS::VirtualMemory::Unlock
+  - [ ] SS::VirtualMemory::Allocate
+  - [ ] SS::VirtualMemory::Free
+  - [ ] SS::VirtualMemory::Read
+  - [ ] SS::VirtualMemory::Write
+  - [ ] SS::VirtualMemory::Lock
+  - [ ] SS::VirtualMemory::Unlock
   - [ ] SS::VirtualMemory::Protect
   - [ ] SS::VirtualMemory::Query
   - [ ] SS::VirtualMemory::SetInformation

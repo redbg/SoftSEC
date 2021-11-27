@@ -1,10 +1,9 @@
-#include "softsec.h"
 #include <stdio.h>
-#include "../shared/shared.h"
+#include "softsec.h"
 
 int main()
 {
-    SS::UM::LoadDriver(TEXT("softsec_x64"), TEXT("C:\\Users\\Win10_64\\Desktop\\softsec_x64.sys"));
+    SS::Driver::Load(TEXT("softsec_x64"), TEXT("C:\\Users\\Win10_64\\Desktop\\softsec_x64.sys"));
 
     Sleep(1000);
     HANDLE hDevice = CreateFile(TEXT("\\\\.\\softsec"),
@@ -17,8 +16,8 @@ int main()
 
     printf("hDevice:[%p]\n", hDevice);
 
-    SS::VirtualMemory vm = {};
-    vm.Method = SS::VirtualMemory::METHOD::Allocate;
+    SS::BASE::VirtualMemory vm = {};
+    vm.Method = SS::BASE::VirtualMemory::METHOD::Allocate;
     vm.ProcessId = 4176;
     vm.Size = 0x1000;
     vm.AllocationType = MEM_COMMIT;
@@ -38,6 +37,6 @@ int main()
 
     system("pause");
 
-    SS::UM::UnloadDriver(TEXT("softsec_x64"));
+    SS::Driver::Unload(TEXT("softsec_x64"));
     return 0;
 }
