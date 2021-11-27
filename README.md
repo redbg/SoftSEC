@@ -10,7 +10,12 @@
 
 ## Roadmap
 
-- Process Memory
-  - [ ] Allocate and free virtual memory
-  - [ ] Change memory protection
-  - [ ] Read/Write virtual memory
+- SS::VirtualMemory
+  - [ ] SS::VirtualMemory::Allocate  SS::VirtualMemory::Free
+  - [ ] SS::VirtualMemory::Read      SS::VirtualMemory::Write
+  - [ ] SS::VirtualMemory::Lock      SS::VirtualMemory::Unlock
+  - [ ] SS::VirtualMemory::Protect
+  - [ ] SS::VirtualMemory::Query
+  - [ ] SS::VirtualMemory::SetInformation
+  - [ ] SS::VirtualMemory::Flush
+  - [ ] SS::VirtualMemory::AllocateEx

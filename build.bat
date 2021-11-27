@@ -32,7 +32,7 @@ if %TargetVersion% == Win10 (
 )
 @REM Linker Options
 set LinkerOptions=/Driver /ENTRY:"DriverEntry" /SUBSYSTEM:NATIVE,"6.01" /NODEFAULTLIB /OUT:bin\%TargetName%_%TargetArch%.sys
-set LinkerLibrary="ntoskrnl.lib"
+set LinkerLibrary="BufferOverflowFastFailK.lib" "ntoskrnl.lib"
 
 if %Configuration% == Debug (
     set CompilerOptions=%CompilerOptions% /Zi
