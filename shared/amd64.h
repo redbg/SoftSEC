@@ -1,12 +1,12 @@
 /**
  * @file amd64.h
  * @author redbg (redbg@softsec.org)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2021-11-25
- * 
+ *
  * @copyright Copyright (c) 2021
- * 
+ *
  */
 
 #pragma once
@@ -105,7 +105,7 @@ namespace SS
     struct GDTR
     {
         unsigned short Limit;
-        Segment_Descriptor *BaseAddress;
+        Segment_Descriptor* BaseAddress;
 
         void SGDT() { _sgdt(this); }
         void LGDT() { _lgdt(this); }
@@ -161,7 +161,7 @@ namespace SS
     struct IDTR
     {
         unsigned short Limit;
-        void *BaseAddress;
+        void* BaseAddress;
 
         void SIDT() { __sidt(this); }
         void LIDT() { __lidt(this); }

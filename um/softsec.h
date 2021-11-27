@@ -12,7 +12,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace SS
+namespace SS::UM
 {
     /**
      * @brief 

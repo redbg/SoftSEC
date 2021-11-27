@@ -1,9 +1,16 @@
-#include <ntddk.h>
-#include "../shared/shared.h"
+#include <ntifs.h>
+#include "Dispatch.h"
 
 VOID DriverUnload(_In_ PDRIVER_OBJECT DriverObject)
 {
     KdPrint(("SS::DriverUnload()\n"));
+
+    // IoDeleteSymbolicLink
+    UNICODE_STRING SymbolicLinkName = RTL_CONSTANT_STRING(DOS_DEVICE_NAME);
+    IoDeleteSymbolicLink(&SymbolicLinkName);
+
+    // IoDeleteDevice
+    IoDeleteDevice(DriverObject->DeviceObject);
 }
 
 extern "C" NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING RegistryPath)
@@ -16,13 +23,15 @@ extern "C" NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_
     PDEVICE_OBJECT DeviceObject = nullptr;
 
     // IoCreateDevice
-    ntStatus = IoCreateDevice(DriverObject,
-                              0,
-                              &DeviceName,
-                              FILE_DEVICE_UNKNOWN,
-                              FILE_DEVICE_SECURE_OPEN,
-                              FALSE,
-                              &DeviceObject);
+    ntStatus = IoCreateDevice(
+        DriverObject,
+        0,
+        &DeviceName,
+        FILE_DEVICE_UNKNOWN,
+        FILE_DEVICE_SECURE_OPEN,
+        FALSE,
+        &DeviceObject);
+
     if (!NT_SUCCESS(ntStatus))
     {
         KdPrint(("IoCreateDevice() error! ntStatus:[%x]\n", ntStatus));
@@ -39,6 +48,9 @@ extern "C" NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_
     }
 
     DriverObject->DriverUnload = DriverUnload;
+    DriverObject->MajorFunction[IRP_MJ_CREATE] = SS::KM::Dispatch::DispatchCreateClose;
+    DriverObject->MajorFunction[IRP_MJ_CLOSE] = SS::KM::Dispatch::DispatchCreateClose;
+    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = SS::KM::Dispatch::DispatchDeviceControl;
 
     return ntStatus;
 }

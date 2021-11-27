@@ -11,7 +11,7 @@
 
 #include "softsec.h"
 
-namespace SS
+namespace SS::UM
 {
     BOOL LoadDriver(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName)
     {
