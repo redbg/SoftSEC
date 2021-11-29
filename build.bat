@@ -47,7 +47,7 @@ cl %CompilerFiles% %CompilerOptions% %Preprocessor% /link %LinkerOptions% %Linke
 
 @REM -------------------- test --------------------
 
-cl um\test.cpp /std:c++17 /link /OUT:bin\test.exe
+cl um\test.cpp /EHsc /std:c++17 /link /OUT:bin\test.exe "kernel32.lib" "user32.lib"
 
 @REM -------------------- clear --------------------
 

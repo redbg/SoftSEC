@@ -19,7 +19,7 @@ namespace SS
                 ntStatus = DispatchFree();
                 break;
             default:
-                ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+                ntStatus = STATUS_INVALID_PARAMETER;
                 break;
             }
 
@@ -33,8 +33,6 @@ namespace SS
             HANDLE hProcess = nullptr;
             CLIENT_ID ClientId = {(HANDLE)ProcessId, 0};
             OBJECT_ATTRIBUTES ObjectAttributes = {sizeof(OBJECT_ATTRIBUTES)};
-
-            DbgBreakPoint();
 
             ntStatus = ZwOpenProcess(&hProcess, GENERIC_ALL, &ObjectAttributes, &ClientId);
             if (!NT_SUCCESS(ntStatus))

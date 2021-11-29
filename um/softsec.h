@@ -11,3 +11,4 @@
 
 #pragma once
 #include "Driver.h"
+#include "VirtualMemory.h"

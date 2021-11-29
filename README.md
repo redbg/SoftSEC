@@ -11,8 +11,8 @@
 ## Roadmap
 
 - SS::Driver
-  - [x] `BOOL SS::Driver::Load(LPCTSTR lpServiceName, LPCTSTR lpBinaryPathName);`
-  - [x] `BOOL SS::Driver::Unload(LPCTSTR lpServiceName)`
+  - [x] `BOOL SS::Driver::Load();`
+  - [x] `BOOL SS::Driver::Unload()`
 - SS::VirtualMemory
   - [ ] SS::VirtualMemory::Allocate
   - [ ] SS::VirtualMemory::Free

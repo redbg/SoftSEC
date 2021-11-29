@@ -1,42 +1,38 @@
 #include <stdio.h>
 #include "softsec.h"
+#include <iostream>
 
 int main()
 {
-    SS::Driver::Load(TEXT("softsec_x64"), TEXT("C:\\Users\\Win10_64\\Desktop\\softsec_x64.sys"));
+    while (!GetAsyncKeyState(VK_END))
+    {
+        if (GetAsyncKeyState(VK_F1))
+        {
+            SS::Driver::Load();
+            printf("%x\n", GetLastError());
+        }
 
-    Sleep(1000);
-    HANDLE hDevice = CreateFile(TEXT("\\\\.\\softsec"),
-                                GENERIC_READ | GENERIC_WRITE,
-                                0,
-                                NULL,
-                                CREATE_ALWAYS,
-                                FILE_ATTRIBUTE_NORMAL,
-                                NULL);
+        if (GetAsyncKeyState(VK_F2))
+        {
+            SS::Driver::Unload();
+            printf("%x\n", GetLastError());
+        }
 
-    printf("hDevice:[%p]\n", hDevice);
+        if (GetAsyncKeyState(VK_F3))
+        {
+            DWORD64 pid = 0;
+            DWORD64 size = 0;
 
-    SS::BASE::VirtualMemory vm = {};
-    vm.Method = SS::BASE::VirtualMemory::METHOD::Allocate;
-    vm.ProcessId = 4176;
-    vm.Size = 0x1000;
-    vm.AllocationType = MEM_COMMIT;
-    vm.Protect = PAGE_READWRITE;
+            std::cout << "pid:";
+            std::cin >> pid;
+            std::cout << "size:";
+            std::cin >> size;
 
-    ULONG bytesReturned = 0;
-    BOOL bRc = DeviceIoControl(hDevice,
-                               (DWORD)IOCTL_SS_VirtualMemory,
-                               &vm,
-                               sizeof(vm),
-                               &vm,
-                               sizeof(vm),
-                               &bytesReturned,
-                               NULL);
+            printf("%p\n", (void *)SS::VirtualMemory::Allocate(pid, size));
+        }
 
-    printf("bRc:[%d] BaseAddress:[%p]\n", bRc, (VOID *)vm.BaseAddress);
+        Sleep(200);
+    }
 
-    system("pause");
-
-    SS::Driver::Unload(TEXT("softsec_x64"));
     return 0;
 }
