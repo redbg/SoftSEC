@@ -30,6 +30,9 @@ namespace SS::BASE
         DWORD64 BaseAddress;
         DWORD64 Size;
         ULONG AllocationType;
-        ULONG Protect;
+        ULONG Protection;
+
+        // kernel
+        HANDLE hProcess;
     };
 }

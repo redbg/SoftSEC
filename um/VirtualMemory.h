@@ -17,7 +17,7 @@ namespace SS
             vm.ProcessId = ProcessId;
             vm.Size = Size;
             vm.AllocationType = AllocationType;
-            vm.Protect = Protect;
+            vm.Protection = Protect;
 
             DeviceIoControl(SS::Driver::hDevice,
                             IOCTL_SS_VirtualMemory,
@@ -28,8 +28,20 @@ namespace SS
             return vm.BaseAddress;
         }
 
-        static void Free()
+        static BOOL Free(DWORD64 ProcessId, DWORD64 BaseAddress, DWORD64 Size = 0, ULONG AllocationType = MEM_RELEASE)
         {
+            SS::VirtualMemory vm = {METHOD::Free};
+
+            vm.ProcessId = ProcessId;
+            vm.BaseAddress = BaseAddress;
+            vm.Size = Size;
+            vm.AllocationType = AllocationType;
+
+            return DeviceIoControl(SS::Driver::hDevice,
+                                   IOCTL_SS_VirtualMemory,
+                                   &vm, sizeof(vm),
+                                   &vm, sizeof(vm),
+                                   NULL, NULL);
         }
     };
 }

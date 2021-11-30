@@ -22,7 +22,7 @@
 
 namespace SS::Driver
 {
-    static HANDLE hDevice = NULL;
+    HANDLE hDevice = NULL;
 
     static BOOL Load()
     {

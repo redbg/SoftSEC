@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "softsec.h"
-#include <iostream>
 
 int main()
 {
@@ -8,14 +7,14 @@ int main()
     {
         if (GetAsyncKeyState(VK_F1))
         {
+            printf("SS::Driver::Load()\n");
             SS::Driver::Load();
-            printf("%x\n", GetLastError());
         }
 
         if (GetAsyncKeyState(VK_F2))
         {
+            printf("SS::Driver::Unload()\n");
             SS::Driver::Unload();
-            printf("%x\n", GetLastError());
         }
 
         if (GetAsyncKeyState(VK_F3))
@@ -23,12 +22,21 @@ int main()
             DWORD64 pid = 0;
             DWORD64 size = 0;
 
-            std::cout << "pid:";
-            std::cin >> pid;
-            std::cout << "size:";
-            std::cin >> size;
+            scanf("%lld,%llx", &pid, &size);
 
-            printf("%p\n", (void *)SS::VirtualMemory::Allocate(pid, size));
+            printf("SS::VirtualMemory::Allocate(%lld, %lld):[0x%p]\n",
+                   pid, size, (void *)SS::VirtualMemory::Allocate(pid, size));
+        }
+
+        if (GetAsyncKeyState(VK_F4))
+        {
+            DWORD64 pid = 0;
+            DWORD64 address = 0;
+
+            scanf("%lld,%llx", &pid, &address);
+
+            printf("SS::VirtualMemory::Free(%lld, 0x%p):[%d]\n",
+                   pid, (void *)address, SS::VirtualMemory::Free(pid, address));
         }
 
         Sleep(200);
