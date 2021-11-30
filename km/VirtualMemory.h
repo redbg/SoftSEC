@@ -50,7 +50,7 @@ namespace SS
 
             if (!NT_SUCCESS(ntStatus))
             {
-                KdPrint(("SS::KM::VirtualMemory::OpenProcess() error! ntStatus:[%x]\n", ntStatus));
+                KdPrint(("SS::VirtualMemory::OpenProcess() error! ntStatus:[%x]\n", ntStatus));
                 return ntStatus;
             }
 
