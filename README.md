@@ -14,8 +14,8 @@
   - [x] `BOOL SS::Driver::Load();`
   - [x] `BOOL SS::Driver::Unload()`
 - SS::VirtualMemory
-  - [ ] SS::VirtualMemory::Allocate
-  - [ ] SS::VirtualMemory::Free
+  - [x] SS::VirtualMemory::Allocate
+  - [x] SS::VirtualMemory::Free
   - [ ] SS::VirtualMemory::Read
   - [ ] SS::VirtualMemory::Write
   - [ ] SS::VirtualMemory::Lock
