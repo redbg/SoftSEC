@@ -2,7 +2,7 @@
 #include <ntifs.h>
 #include "VirtualMemory.h"
 
-namespace SS::KM::Dispatch
+namespace SS::Dispatch
 {
     NTSTATUS DispatchCreateClose(_In_ PDEVICE_OBJECT DeviceObject, _Inout_ PIRP Irp)
     {
@@ -20,13 +20,14 @@ namespace SS::KM::Dispatch
 
         PIO_STACK_LOCATION irpSp;
         irpSp = IoGetCurrentIrpStackLocation(Irp);
-        ULONG InputBufferLength = irpSp->Parameters.DeviceIoControl.InputBufferLength;
-        ULONG OutputBufferLength = irpSp->Parameters.DeviceIoControl.OutputBufferLength;
+        ULONG inputBufferLength = irpSp->Parameters.DeviceIoControl.InputBufferLength;
+        ULONG outputBufferLength = irpSp->Parameters.DeviceIoControl.OutputBufferLength;
+        PVOID buffer = Irp->AssociatedIrp.SystemBuffer;
 
         switch (irpSp->Parameters.DeviceIoControl.IoControlCode)
         {
         case IOCTL_SS_VirtualMemory:
-            ntStatus = ((SS::VirtualMemory *)Irp->AssociatedIrp.SystemBuffer)->Dispatch();
+            ntStatus = ((SS::VirtualMemory *)buffer)->Dispatch();
             Irp->IoStatus.Information = sizeof(SS::VirtualMemory);
             break;
         default:

@@ -18,13 +18,13 @@ namespace SS
             }
 
             // Dispatch Method
-            switch (Method)
+            switch (this->Method)
             {
             case METHOD::Allocate:
-                ntStatus = DispatchAllocate();
+                ntStatus = Allocate();
                 break;
             case METHOD::Free:
-                ntStatus = DispatchFree();
+                ntStatus = Free();
                 break;
             default:
                 ntStatus = STATUS_INVALID_PARAMETER;
@@ -57,7 +57,7 @@ namespace SS
             return ntStatus;
         }
 
-        NTSTATUS DispatchAllocate()
+        NTSTATUS Allocate()
         {
             return ZwAllocateVirtualMemory(hProcess,
                                            (PVOID *)&BaseAddress,
@@ -67,7 +67,7 @@ namespace SS
                                            Protection);
         }
 
-        NTSTATUS DispatchFree()
+        NTSTATUS Free()
         {
             return ZwFreeVirtualMemory(hProcess,
                                        (PVOID *)&BaseAddress,

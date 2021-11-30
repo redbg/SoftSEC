@@ -48,9 +48,9 @@ extern "C" NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_
     }
 
     DriverObject->DriverUnload = DriverUnload;
-    DriverObject->MajorFunction[IRP_MJ_CREATE] = SS::KM::Dispatch::DispatchCreateClose;
-    DriverObject->MajorFunction[IRP_MJ_CLOSE] = SS::KM::Dispatch::DispatchCreateClose;
-    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = SS::KM::Dispatch::DispatchDeviceControl;
+    DriverObject->MajorFunction[IRP_MJ_CREATE] = SS::Dispatch::DispatchCreateClose;
+    DriverObject->MajorFunction[IRP_MJ_CLOSE] = SS::Dispatch::DispatchCreateClose;
+    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = SS::Dispatch::DispatchDeviceControl;
 
     return ntStatus;
 }

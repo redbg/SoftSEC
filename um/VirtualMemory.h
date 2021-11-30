@@ -28,7 +28,10 @@ namespace SS
             return vm.BaseAddress;
         }
 
-        static BOOL Free(DWORD64 ProcessId, DWORD64 BaseAddress, DWORD64 Size = 0, ULONG AllocationType = MEM_RELEASE)
+        static BOOL Free(DWORD64 ProcessId,
+                         DWORD64 BaseAddress,
+                         DWORD64 Size = 0,
+                         ULONG AllocationType = MEM_RELEASE)
         {
             SS::VirtualMemory vm = {METHOD::Free};
 
