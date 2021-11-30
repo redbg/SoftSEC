@@ -24,15 +24,16 @@ namespace SS::BASE
         enum class METHOD : DWORD64
         {
             Allocate,
-            Free
+            Free,
+            Copy
         } Method;
-        DWORD64 ProcessId;
-        DWORD64 BaseAddress;
+        DWORD64 TargetProcessId;
+        DWORD64 TargetAddress;
+        DWORD64 SourceProcessId;
+        DWORD64 SourceAddress;
         DWORD64 Size;
         ULONG AllocationType;
         ULONG Protection;
-
-        // kernel
-        HANDLE hProcess;
+        NTSTATUS ntStatus;
     };
 }

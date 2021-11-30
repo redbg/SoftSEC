@@ -16,6 +16,7 @@
 - SS::VirtualMemory
   - [x] `SS::VirtualMemory::Allocate`
   - [x] `SS::VirtualMemory::Free`
+  - [x] `SS::VirtualMemory::Copy`
   - [ ] SS::VirtualMemory::Read
   - [ ] SS::VirtualMemory::Write
   - [ ] SS::VirtualMemory::Lock

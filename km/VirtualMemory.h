@@ -2,77 +2,153 @@
 #include <ntifs.h>
 #include "../shared/shared.h"
 
+extern "C" NTSTATUS
+    NTAPI
+    MmCopyVirtualMemory(
+        IN PEPROCESS FromProcess,
+        IN CONST PVOID FromAddress,
+        IN PEPROCESS ToProcess,
+        OUT PVOID ToAddress,
+        IN SIZE_T BufferSize,
+        IN KPROCESSOR_MODE PreviousMode,
+        OUT PSIZE_T NumberOfBytesCopied);
+
 namespace SS
 {
     struct VirtualMemory : SS::BASE::VirtualMemory
     {
         NTSTATUS Dispatch()
         {
-            NTSTATUS ntStatus = STATUS_SUCCESS;
-
-            // OpenProcess
-            ntStatus = OpenProcess();
-            if (!NT_SUCCESS(ntStatus))
-            {
-                return ntStatus;
-            }
-
             // Dispatch Method
             switch (this->Method)
             {
             case METHOD::Allocate:
-                ntStatus = Allocate();
+                KdPrint(("=============== SS::VirtualMemory::Allocate ===============\n"));
+                this->ntStatus = Allocate();
                 break;
             case METHOD::Free:
-                ntStatus = Free();
+                KdPrint(("=============== SS::VirtualMemory::Free ===============\n"));
+                this->ntStatus = Free();
+                break;
+            case METHOD::Copy:
+                KdPrint(("=============== SS::VirtualMemory::Copy ===============\n"));
+                this->ntStatus = Copy();
                 break;
             default:
-                ntStatus = STATUS_INVALID_PARAMETER;
+                this->ntStatus = STATUS_INVALID_PARAMETER;
                 break;
             }
-
-            ZwClose(this->hProcess);
-            return ntStatus;
+            PrintInfo();
+            return this->ntStatus;
         }
 
-        NTSTATUS OpenProcess()
+        void PrintInfo()
         {
-            NTSTATUS ntStatus = STATUS_SUCCESS;
+            KdPrint(("TargetProcessId:[%d] TargetAddress[0x%p]\n", TargetProcessId, TargetAddress));
+            KdPrint(("SourceProcessId:[%d] SourceAddress[0x%p]\n", SourceProcessId, SourceAddress));
+            KdPrint(("Size:[0x%x]\n", Size));
+            KdPrint(("AllocationType:[0x%x] Protection[0x%x]\n", AllocationType, Protection));
+            KdPrint(("ntStatus:[0x%x]\n", ntStatus));
+            KdPrint(("============================================================\n"));
+        }
 
-            this->hProcess = nullptr;
-            CLIENT_ID ClientId = {(HANDLE)this->ProcessId, 0};
+        NTSTATUS OpenProcess(_Out_ PHANDLE ProcessHandle)
+        {
+            CLIENT_ID ClientId = {(HANDLE)this->TargetProcessId, 0};
             OBJECT_ATTRIBUTES ObjectAttributes = {sizeof(OBJECT_ATTRIBUTES)};
 
-            ntStatus = ZwOpenProcess(&this->hProcess,
-                                     GENERIC_ALL,
-                                     &ObjectAttributes,
-                                     &ClientId);
+            this->ntStatus = ZwOpenProcess(ProcessHandle,
+                                           GENERIC_ALL,
+                                           &ObjectAttributes,
+                                           &ClientId);
 
-            if (!NT_SUCCESS(ntStatus))
+            if (!NT_SUCCESS(this->ntStatus))
             {
-                KdPrint(("SS::VirtualMemory::OpenProcess() error! ntStatus:[%x]\n", ntStatus));
-                return ntStatus;
+                KdPrint(("SS::VirtualMemory::OpenProcess() error! this->ntStatus:[%x]\n", this->ntStatus));
+                return this->ntStatus;
             }
 
-            return ntStatus;
+            return this->ntStatus;
         }
 
         NTSTATUS Allocate()
         {
-            return ZwAllocateVirtualMemory(hProcess,
-                                           (PVOID *)&BaseAddress,
-                                           0,
-                                           (PSIZE_T)&Size,
-                                           AllocationType,
-                                           Protection);
+            HANDLE hProcess = nullptr;
+
+            this->ntStatus = OpenProcess(&hProcess);
+            if (!NT_SUCCESS(this->ntStatus))
+            {
+                return this->ntStatus;
+            }
+
+            this->ntStatus = ZwAllocateVirtualMemory(hProcess,
+                                                     (PVOID *)&TargetAddress,
+                                                     0,
+                                                     (PSIZE_T)&Size,
+                                                     AllocationType,
+                                                     Protection);
+
+            if (!NT_SUCCESS(this->ntStatus))
+            {
+                KdPrint(("SS::VirtualMemory::Allocate() error! this->ntStatus:[%x]\n", this->ntStatus));
+                return this->ntStatus;
+            }
+
+            ZwClose(hProcess);
+
+            return this->ntStatus;
         }
 
         NTSTATUS Free()
         {
-            return ZwFreeVirtualMemory(hProcess,
-                                       (PVOID *)&BaseAddress,
-                                       (PSIZE_T)&Size,
-                                       AllocationType);
+            HANDLE hProcess = nullptr;
+
+            this->ntStatus = OpenProcess(&hProcess);
+            if (!NT_SUCCESS(this->ntStatus))
+            {
+                return this->ntStatus;
+            }
+
+            this->ntStatus = ZwFreeVirtualMemory(hProcess,
+                                                 (PVOID *)&TargetAddress,
+                                                 (PSIZE_T)&Size,
+                                                 AllocationType);
+
+            ZwClose(hProcess);
+            return this->ntStatus;
+        }
+
+        NTSTATUS Copy()
+        {
+            PEPROCESS pTargetProcess = NULL;
+            PEPROCESS pSourceProcess = NULL;
+            SIZE_T NumberOfBytesCopied = 0;
+
+            do
+            {
+                this->ntStatus = PsLookupProcessByProcessId((HANDLE)this->TargetProcessId,
+                                                            &pTargetProcess);
+
+                if (!NT_SUCCESS(this->ntStatus))
+                {
+                    break;
+                }
+
+                this->ntStatus = PsLookupProcessByProcessId((HANDLE)this->SourceProcessId,
+                                                            &pSourceProcess);
+                if (!NT_SUCCESS(this->ntStatus))
+                {
+                    break;
+                }
+
+                this->ntStatus = MmCopyVirtualMemory(pSourceProcess, (PVOID)this->SourceAddress,
+                                                     pTargetProcess, (PVOID)this->TargetAddress,
+                                                     this->Size, KernelMode, &NumberOfBytesCopied);
+            } while (FALSE);
+
+            ObDereferenceObject(pTargetProcess);
+            ObDereferenceObject(pSourceProcess);
+            return this->ntStatus;
         }
     };
 }
