@@ -13,6 +13,15 @@ extern "C" NTSTATUS
         IN KPROCESSOR_MODE PreviousMode,
         OUT PSIZE_T NumberOfBytesCopied);
 
+extern "C" NTSTATUS
+    NTAPI
+    ZwProtectVirtualMemory(
+        IN HANDLE ProcessHandle,
+        IN OUT PVOID *BaseAddress,
+        IN OUT PSIZE_T RegionSize,
+        IN ULONG NewProtect,
+        OUT PULONG OldProtect);
+
 namespace SS
 {
     struct VirtualMemory : SS::BASE::VirtualMemory
